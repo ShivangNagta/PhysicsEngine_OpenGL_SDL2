@@ -4,22 +4,34 @@
 
 
 int main(int argc, char** argv){
+
+    const int SCREEN_WIDTH = 800;
+    const int SCREEN_HEIGHT = 600;
+
     SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
 
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("Physics Engine", 20, 20, 640,480, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Physics Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Renderer * renderer = SDL_CreateRenderer(window,
+                       -1, SDL_RENDERER_PRESENTVSYNC);
 
-    bool game_is_still_running = true;
-    while (game_is_still_running) {
+
+
+
+    bool gameRunning = true;
+    while (gameRunning) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) { 
-            if (event.type == SDL_QUIT) {
-            game_is_still_running = false;
+            if (event.type == SDL_QUIT)
+            gameRunning = false;
+        }
     }
-    }
-}
 
 
+
+
+
+    SDL_DestroyWindow(window);
+    
     return 0;
 }
