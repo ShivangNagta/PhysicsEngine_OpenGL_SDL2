@@ -13,14 +13,13 @@ int main(int argc, char** argv){
     bool game_is_still_running = true;
     while (game_is_still_running) {
         SDL_Event event;
-        while (SDL_PollEvent(&event)) {  // poll until all events are handled!
-            // decide what to do with this event.
+        while (SDL_PollEvent(&event)) { 
             if (event.type == SDL_QUIT) {
             game_is_still_running = false;
     }
     }
-
- 
 }
+
+
     return 0;
 }
