@@ -1,13 +1,4 @@
-/*
- * Swarm.h
- *
- *  Created on: 13 Sep 2014
- *      Author: johnwpurcell
- */
-
-#ifndef SWARM_H_
-#define SWARM_H_
-
+#pragma once
 #include "Particle.h"
 
 namespace caveofprogramming {
@@ -27,6 +18,4 @@ public:
 	const Particle * const getParticles() { return m_pParticles; };
 };
 
-} /* namespace caveofprogramming */
-
-#endif /* SWARM_H_ */
+}

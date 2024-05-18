@@ -1,18 +1,13 @@
-/*
- * Screen.cpp
- *
- *  Created on: 1 Sep 2014
- *      Author: johnwpurcell
- */
 
 #include "Screen.h"
 #include <cstring>
+#include<iostream>
 
 namespace caveofprogramming {
 
 Screen::Screen() :
 		m_window(NULL), m_renderer(NULL), m_texture(NULL), m_buffer(NULL) {
-
+			
 }
 
 bool Screen::init() {
@@ -49,6 +44,16 @@ bool Screen::init() {
 	m_buffer = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
 
 	memset(m_buffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+
+	SDL_RendererInfo info;
+	SDL_GetRendererInfo(m_renderer, &info);
+	printf("Renderer name: %s\n", info.name);
+	if (info.flags & SDL_RENDERER_ACCELERATED) {
+		printf("Using hardware acceleration\n");
+	} else {
+		printf("Using software rendering\n");
+	}
+
 
 	return true;
 }
@@ -102,4 +107,4 @@ void Screen::close() {
 	SDL_Quit();
 }
 
-} /* namespace caveofprogramming */
+} 

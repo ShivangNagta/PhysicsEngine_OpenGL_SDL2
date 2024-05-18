@@ -1,13 +1,4 @@
-/*
- * Screen.h
- *
- *  Created on: 1 Sep 2014
- *      Author: johnwpurcell
- */
-
-#ifndef SCREEN_H_
-#define SCREEN_H_
-
+#pragma once
 #include <SDL2/SDL.h>
 
 namespace caveofprogramming {
@@ -33,6 +24,4 @@ public:
 	void clear();
 };
 
-} /* namespace caveofprogramming */
-
-#endif /* SCREEN_H_ */
+}

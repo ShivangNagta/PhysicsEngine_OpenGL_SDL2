@@ -1,11 +1,3 @@
-//============================================================================
-// Name        : SDL.cpp
-// Author      : John Purcell
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <math.h>
@@ -17,6 +9,7 @@ using namespace std;
 using namespace caveofprogramming;
 
 int main(int argc, char* argv[]) {
+
 
 	srand(time(NULL));
 
@@ -38,9 +31,9 @@ int main(int argc, char* argv[]) {
 		swarm.update();
 
 		unsigned char green =
-				(unsigned char) ((1 + sin(elapsed * 0.0001)) * 128);
-		unsigned char red = (unsigned char) ((1 + sin(elapsed * 0.0002)) * 128);
-		unsigned char blue = (unsigned char) ((1 + sin(elapsed * 0.0003)) * 128);
+				(unsigned char) ((1.5 + sin(elapsed * 0.0001)) * 96);
+		unsigned char red = (unsigned char) ((1.5 + sin(elapsed * 0.0002)) * 96);
+		unsigned char blue = (unsigned char) ((1.5 + sin(elapsed * 0.0003)) * 96);
 
 		const Particle * const pParticles = swarm.getParticles();
 

@@ -1,12 +1,4 @@
-/*
- * Particle.h
- *
- *  Created on: 13 Sep 2014
- *      Author: johnwpurcell
- */
-
-#ifndef PARTICLE_H_
-#define PARTICLE_H_
+#pragma once
 
 namespace caveofprogramming {
 
@@ -23,6 +15,4 @@ public:
 	void update();
 };
 
-} /* namespace caveofprogramming */
-
-#endif /* PARTICLE_H_ */
+} 

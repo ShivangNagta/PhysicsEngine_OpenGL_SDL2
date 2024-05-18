@@ -1,9 +1,3 @@
-/*
- * Swarm.cpp
- *
- *  Created on: 13 Sep 2014
- *      Author: johnwpurcell
- */
 
 #include "Swarm.h"
 
@@ -24,4 +18,4 @@ void Swarm::update() {
 	}
 }
 
-} /* namespace caveofprogramming */
+}
