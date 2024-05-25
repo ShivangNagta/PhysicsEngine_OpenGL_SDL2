@@ -3,9 +3,9 @@
 // SDL2 library for handling graphics and events
 #include <SDL2/SDL.h>
 // Math library for mathematical functions such as sin and cos
-#include <cmath>
+#include <math.h>
 // Time library for seeding the random number generator
-#include <ctime>
+#include <time.h>
 // String manipulation functions library for memory operations like memset
 #include <cstring>
 
@@ -127,43 +127,44 @@ public:
         SDL_Quit();
     }
 
-    void boxBlur() {
-        Uint32 *temp = m_buffer1;
-        m_buffer1 = m_buffer2;
-        m_buffer2 = temp;
+	void boxBlur() {
+		Uint32 *temp = m_buffer1;
+		m_buffer1 = m_buffer2;
+		m_buffer2 = temp;
 
-        for (int y = 0; y < SCREEN_HEIGHT; y++) {
-            for (int x = 0; x < SCREEN_WIDTH; x++) {
+		for (int y = 0; y< SCREEN_HEIGHT; y++){
+			for (int x = 0; x< SCREEN_WIDTH; x++){
 
-                int redTotal = 0;
-                int greenTotal = 0;
-                int blueTotal = 0;
+				int redTotal = 0;
+				int greenTotal = 0;
+				int blueTotal = 0;
 
-                for (int row = -1; row <= 1; row++) {
-                    for (int col = -1; col <= 1; col++) {
-                        int currentX = x + col;
-                        int currentY = y + row;
+				for (int row=-1; row<=1; row++){
+					for (int col=-1; col<=1; col++){
+						int currentX = x + col;
+						int currentY = y + row;
 
-                        if (currentX >= 0 && currentX < SCREEN_WIDTH && currentY >= 0 && currentY < SCREEN_HEIGHT) {
-                            Uint32 color = m_buffer2[currentY * SCREEN_WIDTH + currentX];
-                            Uint8 red = color >> 24;
-                            Uint8 green = color >> 16;
-                            Uint8 blue = color >> 8;
+						if (currentX >=0 && currentX < SCREEN_WIDTH && currentY>=0 && currentY <SCREEN_HEIGHT){
+							Uint32 color = m_buffer2[SCREEN_WIDTH*currentY + currentX];
+							Uint8 red = color >> 24;
+							Uint8 green = color >> 16;
+							Uint8 blue = color >> 8;
 
-                            redTotal += red;
-                            greenTotal += green;
-                            blueTotal += blue;
-                        }
-                    }
-                }
-                Uint8 red = redTotal / 9.2;
-                Uint8 green = greenTotal / 9.2;
-                Uint8 blue = blueTotal / 9.2;
+							redTotal += red;
+						    greenTotal += green;
+						    blueTotal += blue;
+						}
+					}
+				}
+				Uint8 red = redTotal / 9.5;
+				Uint8 green = greenTotal / 9.5;
+				Uint8 blue = blueTotal / 9.5 ;
 
-                setPixel(x, y, red, green, blue);
-            }
-        }
-    }
+				setPixel (x, y, red, green, blue);
+
+			}
+		}
+	}
 };
 
 // Particle class for managing individual particles
@@ -183,35 +184,34 @@ struct Particle {
     virtual ~Particle() {}
 
     // Update the particle's position based on its speed and direction
-    void update(int interval) {
-        m_direction += 0.0003 * interval;
+    void update() {
+        // m_direction += 0.002;
         double xspeed = m_speed * cos(m_direction);
         double yspeed = m_speed * sin(m_direction);
 
-        m_x += xspeed * interval;
-        m_y += yspeed * interval;
+        m_x += xspeed;
+        m_y += yspeed;
 
-        if (m_x < -1 || m_x > 1 || m_y < -1 || m_y > 1) {
-            m_x = 0;
-            m_y = 0;
-            m_direction = (2 * M_PI * rand()) / RAND_MAX;
-            m_speed = (0.01 * rand()) / RAND_MAX;
-        }
+		// if (m_x < -1 || m_x > 1 || m_y < -1 || m_y > 1) {
+        //     m_x = 0;
+        //     m_y = 0;
+        //     m_direction = (2 * M_PI * rand()) / RAND_MAX;
+        //     m_speed = (0.005 * rand()) / RAND_MAX;
+        // }
     }
 };
 
 // Swarm class for managing a collection of particles
 class Swarm {
 public:
-    const static int NPARTICLES = 10000;  // Number of particles
+    const static int NPARTICLES = 20000;  // Number of particles
 
 private:
     Particle *m_pParticles;  // Array of particles
-    int lastTime;
 
 public:
     // Constructor to allocate particles
-    Swarm() : lastTime(0) {
+    Swarm() {
         m_pParticles = new Particle[NPARTICLES];
     }
 
@@ -221,12 +221,10 @@ public:
     }
 
     // Update all particles in the swarm
-    void update(int elapsed) {
-        int interval = elapsed - lastTime;
+    void update() {
         for (int i = 0; i < NPARTICLES; i++) {
-            m_pParticles[i].update(interval);
+            m_pParticles[i].update();
         }
-        lastTime = elapsed;
     }
 
     // Get the particles array
@@ -253,12 +251,13 @@ int main(int argc, char *argv[]) {
     while (true) {
         int elapsed = SDL_GetTicks();  // Get the elapsed time
 
-        swarm.update(elapsed);  // Update the swarm
+        // screen.clear(); // Clear the screen
+        swarm.update();  // Update the swarm
 
         // Calculate colors based on elapsed time
-        unsigned char green = (unsigned char)((1 + sin(elapsed * 0.0002)) * 128);
-        unsigned char red = (unsigned char)((1 + sin(elapsed * 0.0003)) * 128);
-        unsigned char blue = (unsigned char)((1 + sin(elapsed * 0.0001)) * 128);
+        unsigned char green = (unsigned char)((1.5 + sin(elapsed * 0.0001)) * 96);
+        unsigned char red   = (unsigned char)((1.5 + sin(elapsed * 0.0002)) * 96);
+        unsigned char blue  = (unsigned char)((1.5 + sin(elapsed * 0.0003)) * 96);
 
         // Get the particles from the swarm
         const Particle *const pParticles = swarm.getParticles();
@@ -272,8 +271,7 @@ int main(int argc, char *argv[]) {
 
             screen.setPixel(x, y, red, green, blue);
         }
-
-        screen.boxBlur();
+		screen.boxBlur();
 
         screen.update();  // Update the screen
 
