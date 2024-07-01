@@ -2,9 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <numeric>
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_sdl2.h>
-#include <imgui/imgui_impl_sdlrenderer2.h>
 
 using namespace std;
 
@@ -56,7 +53,7 @@ int main(int argc, char** argv){
     double k = 0.89;
     double length = 10;
     double tempLeft = 100;
-    double tempRight = 200;
+    double tempRight = 100;
     double totalTime = 0;
     double timeStep = 0.0001;
     double dx = 0.1;
@@ -75,63 +72,20 @@ int main(int argc, char** argv){
     SDL_Window* window = SDL_CreateWindow("1-D Heat Equation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-    ImGui_ImplSDLRenderer2_Init(renderer);
-
-
     bool running = true;
     SDL_Event e;
     while(running){
         while(SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) running = false;
-                    ImGui_ImplSDL2_ProcessEvent(&e);
         }
-
-        double avg = std::accumulate(Temp.begin(), Temp.end(), 0.0) / Temp.size();       
-        string txt = to_string(avg);
-        totalTime+= timeStep;
-        string time = to_string(totalTime);
-        
-        ImGui_ImplSDLRenderer2_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
-        
-        ImGui::Begin("Avg Temp");
-        ImGui::SetWindowFontScale(2.0f);
-        ImGui::Text("%s", txt.c_str());
-        ImGui::End();
-
-        ImGui::Begin("Time Elapsed");
-        ImGui::SetWindowFontScale(2.0f);
-        ImGui::Text("%s", time.c_str());
-        ImGui::End();
-
-        ImGui::Begin("TempLeft");
-
-        ImGui::Text("200");
-        ImGui::End();
-
-        ImGui::Begin("TempRight");
-
-        ImGui::Text("100");
-        ImGui::End();
-
-        ImGui::Render();
-
-        
         SDL_SetRenderTarget(renderer, NULL);
-        SDL_SetRenderDrawColor(renderer,174, 182, 210, 1);
+        SDL_SetRenderDrawColor(renderer, 222, 161, 148, 0.8);
         SDL_RenderClear(renderer);
-        ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
         UpdateTemp(Temp, timeStep, numberOfBars, barWidth, k, tempLeft, tempRight, dx);
-        
+        totalTime+= timeStep;
         UpdateColor(renderer, Temp, numberOfBars, maxTemp, minTemp, barWidth, height, dx);
-
+        double avg = std::accumulate(Temp.begin(), Temp.end(), 0.0) / Temp.size();
+        cout << avg << endl;
         
 
     }
