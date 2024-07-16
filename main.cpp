@@ -220,8 +220,11 @@ void PreDraw(){
     glUseProgram(gGraphicsPipelineShaderProgram);
     
     // Local to World Space
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f +g_uOffset));
-    model           = glm::rotate(model, glm::radians(g_uRotate), glm::vec3(0.0f, 1.0f, 0.0f));
+    // glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f +g_uOffset));
+    // model           = glm::rotate(model, glm::radians(g_uRotate), glm::vec3(0.0f, 1.0f, 0.0f));
+    // model           = glm::scale(model, glm::vec3(g_uScale, g_uScale, g_uScale));
+    glm::mat4 model = glm::rotate(glm::mat4(1.0f),glm::radians(g_uRotate), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f +g_uOffset));         
     model           = glm::scale(model, glm::vec3(g_uScale, g_uScale, g_uScale));
 
     GLint u_ModelMatrixLocation = glGetUniformLocation(gGraphicsPipelineShaderProgram, "u_ModelMatrix");
@@ -238,9 +241,9 @@ void PreDraw(){
     glUniformMatrix4fv(u_PerspectiveLocation, 1, GL_FALSE, &perspective[0][0]);
 }
 
-void Draw() {
+void Draw() {   
     glBindVertexArray(gVertexArrayObject);
-    glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
+    // glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
     // glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     SDL_GL_SwapWindow(gGraphicsApplicationWindow);
