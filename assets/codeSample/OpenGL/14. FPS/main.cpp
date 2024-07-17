@@ -6,10 +6,14 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-//C++
+//C++ STL
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
+
+//My Custom Libraries
+#include "Camera.hpp"
 
 const int gScreenWidth = 640;
 const int gScreenHeight = 480;
@@ -42,6 +46,9 @@ float g_uOffset = 0.01f;
 float g_uRotate = 0.01f;
 float g_uScale = 0.5f;
 
+// Global Camera;
+Camera g_camera;
+
 GLuint CompileShader(GLuint type, const std::string& source){
     GLuint shaderObject;
 
@@ -72,6 +79,34 @@ GLuint CreateShaderProgram(const std::string& vertexshadersource,
     glValidateProgram(programObject);
 
     return programObject;
+
+}
+
+// FPS
+void ShowFPS(SDL_Window*){
+    static double previousSeconds = 0.0;
+    static int frameCount = 0;
+    double elapsedSeconds;
+
+    double currentSeconds = SDL_GetTicks() / 1000.0;
+
+    elapsedSeconds = currentSeconds - previousSeconds;
+
+    //Update 4 times a second
+    if (elapsedSeconds > 0.25){
+        previousSeconds = currentSeconds;
+        double fps = (double)frameCount / elapsedSeconds;
+        double msPerFrame = 1000 / fps;
+
+        std::ostringstream outs;
+        outs.precision(3);
+        outs << std::fixed << "  "
+             << "FPS: " << fps << "  "
+             << "Frame Time: " << msPerFrame << " (ms)";
+        SDL_SetWindowTitle(gGraphicsApplicationWindow, outs.str().c_str());
+        frameCount = 0;   
+    }
+    frameCount++;
 
 }
 
@@ -181,30 +216,62 @@ void Init(){
         exit(1);
     }
 
+        // Disable V-Sync
+    if (SDL_GL_SetSwapInterval(0) < 0) {
+        std::cerr << "Warning: Unable to disable VSync! SDL Error: " << SDL_GetError() << std::endl;
+    }
+
     GetOpenGLVersionInfo();
 }
 
 void Input(){
     SDL_Event e;
+    static int mouseX = gScreenWidth / 2;
+    static int mouseY = gScreenHeight / 2;
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
-        case SDL_QUIT:
+        case (SDL_QUIT):
             gQuit = true;
+            break;
+        case SDL_KEYDOWN:
+            if (e.key.keysym.sym == SDLK_ESCAPE) {
+                gQuit = true;
+            }
+            break;
+        case (SDL_MOUSEMOTION):
+            mouseX += e.motion.xrel;
+            mouseY += e.motion.yrel;
+            g_camera.MouseLook(mouseX, mouseY );
             break;
         }
     }
+    
+    // const Uint8 *state = SDL_GetKeyboardState(NULL);
+    // if(state[SDL_SCANCODE_UP]){
+    //     g_uOffset += 0.01f;
+    // }
+    // if(state[SDL_SCANCODE_DOWN]){
+    //     g_uOffset -= 0.01f;
+    // }
+    // if(state[SDL_SCANCODE_LEFT]){
+    //     g_uRotate -= 1.0f;
+    // }
+    // if(state[SDL_SCANCODE_RIGHT]){
+    //     g_uRotate += 1.0f;
+    // }
     const Uint8 *state = SDL_GetKeyboardState(NULL);
-    if(state[SDL_SCANCODE_UP]){
-        g_uOffset += 0.01f;
+    float speed = 0.01f;
+    if(state[SDL_SCANCODE_W]){
+        g_camera.MoveForward(speed);
     }
-    if(state[SDL_SCANCODE_DOWN]){
-        g_uOffset -= 0.01f;
+    if(state[SDL_SCANCODE_S]){
+        g_camera.MoveBackward(speed);
     }
-    if(state[SDL_SCANCODE_LEFT]){
-        g_uRotate -= 1.0f;
+    if(state[SDL_SCANCODE_A]){
+        g_camera.MoveLeft(speed);
     }
-    if(state[SDL_SCANCODE_RIGHT]){
-        g_uRotate += 1.0f;
+    if(state[SDL_SCANCODE_D]){
+        g_camera.MoveRight(speed);
     }
 }
 
@@ -218,18 +285,32 @@ void PreDraw(){
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(gGraphicsPipelineShaderProgram);
+
+    g_uRotate += 0.2f;
     
     // Local to World Space
     // glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f +g_uOffset));
     // model           = glm::rotate(model, glm::radians(g_uRotate), glm::vec3(0.0f, 1.0f, 0.0f));
     // model           = glm::scale(model, glm::vec3(g_uScale, g_uScale, g_uScale));
-    glm::mat4 model = glm::rotate(glm::mat4(1.0f),glm::radians(g_uRotate), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f +g_uOffset));         
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f +g_uOffset));         
+    model           = glm::rotate(model ,glm::radians(g_uRotate), glm::vec3(0.0f, 1.0f, 0.0f));
     model           = glm::scale(model, glm::vec3(g_uScale, g_uScale, g_uScale));
 
     GLint u_ModelMatrixLocation = glGetUniformLocation(gGraphicsPipelineShaderProgram, "u_ModelMatrix");
-
     glUniformMatrix4fv(u_ModelMatrixLocation, 1, GL_FALSE, &model[0][0]);
+
+    //View Matrix
+    glm::mat4 view = g_camera.GetViewMatrix();
+    GLint u_ViewLocation = glGetUniformLocation(gGraphicsPipelineShaderProgram, "u_View");
+    if(u_ViewLocation >= 0){
+        glUniformMatrix4fv(u_ViewLocation, 1, GL_FALSE, &view[0][0]);
+    }
+    else{
+        std::cout << "u_View errrrrrr!!!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+
     // Persepective Projection
     glm::mat4 perspective = glm::perspective(glm::radians(45.0f), 
                                             (float)gScreenWidth/(float)gScreenHeight,
@@ -250,7 +331,12 @@ void Draw() {
 }
 
 void MainLoop(){
+
+    SDL_WarpMouseInWindow(gGraphicsApplicationWindow, gScreenWidth/2, gScreenHeight/2);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     while (!gQuit) {
+        ShowFPS(gGraphicsApplicationWindow);
         Input();
         PreDraw();
         Draw();
