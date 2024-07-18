@@ -15,10 +15,6 @@
 //My Custom Libraries
 #include "Camera.hpp"
 #include "ShaderProgram.hpp"
-#include "Texture2D.hpp"
-
-//test
-const std::string texture1 = "./assets/textures/airplane.PNG";
 
 const int gScreenWidth = 640;
 const int gScreenHeight = 480;
@@ -37,7 +33,6 @@ float g_uScale = 0.5f;
 
 // Global Camera;
 Camera g_camera;
-Texture2D texture;
 
 // FPS
 void ShowFPS(SDL_Window*){
@@ -70,14 +65,40 @@ void ShowFPS(SDL_Window*){
 
 void VertexSpecification(){
     const std::vector<GLfloat> vertexData{
-        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-      
+         0.5f, -0.5f, 0.5f,  //0
+         0.0f,  1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f,  //1
+         1.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f, 0.5f,  //2
+         0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f, 0.5f,  //3
+         1.0f,  0.0f, 0.0f,
+
+         0.5f, -0.5f, -0.5f,  //4
+         0.0f,  1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  //5
+         1.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  //6
+         0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  //7
+         1.0f,  0.0f, 0.0f,
+
     };
 
-    const std::vector<GLint> indexData{0, 1, 2, 3, 0, 2};
+    const std::vector<GLuint> indexData{
+        // Front face
+        0, 1, 2, 0, 2, 3,
+        // Back face
+        4, 5, 6, 4, 6, 7,
+        // Left face
+        1, 5, 6, 1, 6, 2,
+        // Right face
+        0, 4, 7, 0, 7, 3,
+        // Top face
+        2, 6, 7, 2, 7, 3,
+        // Bottom face
+        0, 1, 5, 0, 5, 4,
+    };
 
     glGenVertexArrays(1, &gVertexArrayObject);
     glBindVertexArray(gVertexArrayObject);
@@ -101,15 +122,15 @@ void VertexSpecification(){
                           3,
                           GL_FLOAT,
                           GL_FALSE,
-                          5*sizeof(GL_FLOAT),
+                          6*sizeof(GL_FLOAT),
                           (void*)0);
  
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,
-                          2,
+                          3,
                           GL_FLOAT,
                           GL_FALSE,
-                          5*sizeof(GL_FLOAT),
+                          6*sizeof(GL_FLOAT),
                           (GLvoid*)(sizeof(GL_FLOAT)*3));
 
     glBindVertexArray(0);
@@ -212,8 +233,6 @@ void Input(){
 void PreDraw(){
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
-    texture.loadTexture(texture1, true);
-    texture.bind();
 
     ShaderProgram shaderProgram;
     shaderProgram.LoadShader("./shaders/vert.glsl", "./shaders/frag.glsl");
@@ -262,7 +281,7 @@ void PreDraw(){
 
 void Draw() {   
     glBindVertexArray(gVertexArrayObject);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     SDL_GL_SwapWindow(gGraphicsApplicationWindow);
 }
 
