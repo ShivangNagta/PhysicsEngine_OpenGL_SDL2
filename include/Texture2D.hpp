@@ -13,6 +13,7 @@ class Texture2D{
 
     bool loadTexture(const string& filename, bool generatedMipMaps = true);
     void bind(GLuint texUnit = 0);
+    void unbind(GLuint texUnit = 0);
 
     private:
     GLuint mTexture;
