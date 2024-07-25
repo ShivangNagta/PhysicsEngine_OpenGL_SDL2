@@ -111,22 +111,22 @@ void Init(){
 
 
 	mesh[0].loadOBJ("./assets/models/barrel.obj");
-	mesh[1].loadOBJ("./assets/models/woodcrate.obj");
-	mesh[2].loadOBJ("./assets/models/robot.obj");
-	mesh[3].loadOBJ("./assets/models/floor.obj");
-	mesh[4].loadOBJ("./assets/models/bowling_pin.obj");
-	mesh[5].loadOBJ("./assets/models/bunny.obj");
+	// mesh[1].loadOBJ("./assets/models/woodcrate.obj");
+	// mesh[2].loadOBJ("./assets/models/robot.obj");
+	// mesh[3].loadOBJ("./assets/models/floor.obj");
+	// mesh[4].loadOBJ("./assets/models/bowling_pin.obj");
+	// mesh[5].loadOBJ("./assets/models/bunny.obj");
 
     // lightMesh.loadOBJ("./assets/models/light.obj");
     
 
 
     texture[0].loadTexture("./assets/textures/crate.jpg", true);
-    texture[1].loadTexture("./assets/textures/woodcrate_diffuse.jpg", true);
-    texture[2].loadTexture("./assets/textures/robot_diffuse.jpg", true);
-    texture[3].loadTexture("./assets/textures/tile_floor.jpg", true);
-    texture[4].loadTexture("./assets/textures/AMF.tga", true);
-    texture[5].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
+    // texture[1].loadTexture("./assets/textures/woodcrate_diffuse.jpg", true);
+    // texture[2].loadTexture("./assets/textures/robot_diffuse.jpg", true);
+    // texture[3].loadTexture("./assets/textures/tile_floor.jpg", true);
+    // texture[4].loadTexture("./assets/textures/AMF.tga", true);
+    // texture[5].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
 }
 
 

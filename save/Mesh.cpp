@@ -1,11 +1,23 @@
+//-----------------------------------------------------------------------------
+// Mesh.cpp by Steve Jones 
+// Copyright (c) 2015-2019 Game Institute. All Rights Reserved.
+//
+// Basic Mesh class
+//-----------------------------------------------------------------------------
 #include "Mesh.hpp"
 #include <iostream>
 #include <sstream>
 #include <fstream>
 
 
-
-
+//-----------------------------------------------------------------------------
+// split
+//
+// Params:  s - string to split
+//		    t - string to split (ie. delimiter)
+//
+//Result:  Splits string according to some substring and returns it as a vector.
+//-----------------------------------------------------------------------------
 std::vector<std::string> split(std::string s, std::string t)
 {
 	std::vector<std::string> res;
@@ -23,17 +35,35 @@ std::vector<std::string> split(std::string s, std::string t)
 	return res;
 }
 
+
+//-----------------------------------------------------------------------------
+// Constructor
+//-----------------------------------------------------------------------------
 Mesh::Mesh()
 	:mLoaded(false)
 {
 }
 
+//-----------------------------------------------------------------------------
+// Destructor
+//-----------------------------------------------------------------------------
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &mVAO);
 	glDeleteBuffers(1, &mVBO);
 }
 
+//-----------------------------------------------------------------------------
+// Loads a Wavefront OBJ model
+//
+// NOTE: This is not a complete, full featured OBJ loader.  It is greatly
+// simplified.
+// Assumptions!
+//  - OBJ file must contain only triangles
+//  - We ignore materials
+//  - We ignore normals
+//  - only commands "v", "vt" and "f" are supported
+//-----------------------------------------------------------------------------
 bool Mesh::loadOBJ(const std::string& filename)
 {
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
@@ -168,40 +198,34 @@ bool Mesh::loadOBJ(const std::string& filename)
 	return false;
 }
 
-
-
-
-
-
 //-----------------------------------------------------------------------------
 // Create and initialize the vertex buffer and vertex array object
 // Must have valid, non-empty std::vector of Vertex objects.
 //-----------------------------------------------------------------------------
 void Mesh::initBuffers()
 {
-    glGenVertexArrays(1, &mVAO);
-    glGenBuffers(1, &mVBO);
+	glGenVertexArrays(1, &mVAO);
+	glGenBuffers(1, &mVBO);
 
-    glBindVertexArray(mVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-    glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(Vertex), &mVertices[0], GL_STATIC_DRAW);
+	glBindVertexArray(mVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(Vertex), &mVertices[0], GL_STATIC_DRAW);
 
-    // Vertex Positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	// Vertex Positions
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
 
-    // Vertex Normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, normal)));
+	// Normals attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
-    // Vertex Texture Coords
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, texCoords)));
-
-    // unbind to make sure other code does not change it somewhere else
-    glBindVertexArray(0);
+	// Vertex Texture Coords
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+	
+	// unbind to make sure other code does not change it somewhere else
+	glBindVertexArray(0);
 }
-
 
 //-----------------------------------------------------------------------------
 // Render the mesh
