@@ -111,8 +111,8 @@ void Init(){
 
 
 
-	mesh[0].loadOBJ("./assets/models/bunny.obj");
-	mesh[1].loadOBJ("./assets/models/floor.obj");
+	// mesh[0].loadOBJ("./assets/models/bunny.obj");
+	mesh[0].loadOBJ("./assets/models/floor.obj");
 	// mesh[2].loadOBJ("./assets/models/barrel.obj");
 	// mesh[3].loadOBJ("./assets/models/woodcrate.obj");
 	// mesh[0].loadOBJ("./assets/models/robot.obj");
@@ -123,9 +123,9 @@ void Init(){
     
 
 
-    texture[0].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
+    // texture[0].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
     // texture[1].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
-    texture[1].loadTexture("./assets/textures/tile_floor.jpg", true);
+    texture[0].loadTexture("./assets/textures/tile_floor.jpg", true);
     // texture[2].loadTexture("./assets/textures/crate.jpg", true);
     // texture[3].loadTexture("./assets/textures/woodcrate_diffuse.jpg", true);
     // texture[0].loadTexture("./assets/textures/robot_diffuse.jpg", true);
@@ -211,9 +211,9 @@ void PreDraw(){
 
     // Model scale
     glm::vec3 modelScale[] = {
-        glm::vec3(1.5f, 1.5f, 1.5f),    // bunny
-        // glm::vec3(20.0f, 1.0f, 20.0f),
-        glm::vec3(4.0f, 4.0f, 4.0f),    // floor
+        // glm::vec3(1.5f, 1.5f, 1.5f),    // bunny
+        glm::vec3(20.0f, 1.0f, 20.0f),
+        glm::vec3(4.0f, 1.0f, 4.0f),    // floor
         glm::vec3(1.0f, 1.0f, 1.0f),    // barrel
         glm::vec3(1.0f, 1.0f, 1.0f),    // crate
         glm::vec3(1.0f, 1.0f, 1.0f),    // robot

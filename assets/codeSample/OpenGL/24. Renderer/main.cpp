@@ -112,10 +112,10 @@ void Init(){
 
 
 	mesh[0].loadOBJ("./assets/models/bunny.obj");
-	mesh[1].loadOBJ("./assets/models/floor.obj");
+	// mesh[1].loadOBJ("./assets/models/floor.obj");
 	// mesh[2].loadOBJ("./assets/models/barrel.obj");
 	// mesh[3].loadOBJ("./assets/models/woodcrate.obj");
-	// mesh[0].loadOBJ("./assets/models/robot.obj");
+	// mesh[4].loadOBJ("./assets/models/robot.obj");
 	// mesh[5].loadOBJ("./assets/models/bowling_pin.obj");
 
     lightMesh[0].loadOBJ("./assets/models/light.obj");
@@ -124,11 +124,10 @@ void Init(){
 
 
     texture[0].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
-    // texture[1].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
-    texture[1].loadTexture("./assets/textures/tile_floor.jpg", true);
+    // texture[1].loadTexture("./assets/textures/tile_floor.jpg", true);
     // texture[2].loadTexture("./assets/textures/crate.jpg", true);
     // texture[3].loadTexture("./assets/textures/woodcrate_diffuse.jpg", true);
-    // texture[0].loadTexture("./assets/textures/robot_diffuse.jpg", true);
+    // texture[4].loadTexture("./assets/textures/robot_diffuse.jpg", true);
     // texture[5].loadTexture("./assets/textures/AMF.tga", true);
 }
 
@@ -212,8 +211,7 @@ void PreDraw(){
     // Model scale
     glm::vec3 modelScale[] = {
         glm::vec3(1.5f, 1.5f, 1.5f),    // bunny
-        // glm::vec3(20.0f, 1.0f, 20.0f),
-        glm::vec3(4.0f, 4.0f, 4.0f),    // floor
+        glm::vec3(4.0f, 1.0f, 4.0f),    // floor
         glm::vec3(1.0f, 1.0f, 1.0f),    // barrel
         glm::vec3(1.0f, 1.0f, 1.0f),    // crate
         glm::vec3(1.0f, 1.0f, 1.0f),    // robot
@@ -223,6 +221,8 @@ void PreDraw(){
     glm::vec3 lightPos = {0.0f, 3.0f, 5.0f};
     glm::vec3 lightColor = {1.0f, 1.0f, 1.0f};
 
+    glm::vec3 lightPos2 = {3.0f, 5.0f, 0.0f};
+    glm::vec3 lightColor2 = {1.0f, 0.0f, 0.0f};
 
     angle = SDL_GetTicks64() * 0.1f;
     lightPos.x = cosf(glm::radians(angle)) * 5.0f;
@@ -235,19 +235,11 @@ void PreDraw(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Set light properties for the shader
+    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "lightColor2"), lightColor2.x, lightColor2.y, lightColor2.z);
+    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "lightPos2"), lightPos2.x, lightPos2.y, lightPos2.z);
     glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
-    // glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
-    // glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-
-    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "light.ambient"), 0.2f, 0.2f, 0.2f);
-    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "light.diffuse"), lightColor.x, lightColor.y, lightColor.z);
-    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "light.specular"), 0.2f, 0.8f, 0.0f);
-    glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "light.position"), lightPos.x, lightPos.y, lightPos.z);
-
-        // Assuming you're using OpenGL and have a float value representing time
-    float timeValue = SDL_GetTicks() / 1000.0;  // Implement this to get time in seconds
-    glUniform1f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "time"), timeValue);
-
 
     // View Matrix
     glm::mat4 view = g_camera.GetViewMatrix();
@@ -267,19 +259,10 @@ void PreDraw(){
 
     for (int i = 0; i < numOfModels; i++) {
         // Set model matrix
-
         glm::mat4 model = glm::translate(glm::mat4(1.0f), modelPos[i]);
         model = glm::scale(model, modelScale[i]);
-        // if(i == 1){
-        //     model = glm::rotate(model, glm::radians(60.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        // };
         GLint u_ModelMatrixLocation = glGetUniformLocation(gGraphicsPipelineShaderProgram, "u_ModelMatrix");
         glUniformMatrix4fv(u_ModelMatrixLocation, 1, GL_FALSE, &model[0][0]);
-
-        glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "material.ambient"), 0.1f, 0.1f, 0.1f);
-        glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "material.diffuseMap"), 0.1f, 0.1f, 0.1f);
-        glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "material.specular"), 0.5f, 0.5f, 0.5f);
-        glUniform1f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "material.shininess"), 32.0f);
 
         // Bind texture
         texture[i].bind(0);
@@ -292,15 +275,12 @@ void PreDraw(){
         // Unbind texture
         texture[i].unbind(0);
     }
-
     shaderProgram.Unuse();
 
     ShaderProgram lightShader;
     lightShader.LoadShader("./shaders/light.vert", "./shaders/light.frag");
     GLuint gGraphicsPipelineLightShader = lightShader.GetProgramID();
 
-
-    // Shader for drawing the actual light source sphere
     lightShader.Use();
 
     // View Matrix
@@ -318,6 +298,11 @@ void PreDraw(){
     glUniform3f(u_lightCol, lightColor.x, lightColor.y, lightColor.z);
     lightMesh[0].draw();
 
+    // Draw second light
+    glm::mat4 model2 = glm::translate(glm::mat4(1.0f), lightPos2);
+    glUniformMatrix4fv(glGetUniformLocation(gGraphicsPipelineLightShader, "u_ModelMatrixLight"), 1, GL_FALSE, &model2[0][0]);
+    glUniform3f(u_lightCol, lightColor2.x, lightColor2.y, lightColor2.z);
+    lightMesh[1].draw();
 
     SDL_GL_SwapWindow(gGraphicsApplicationWindow);
 }

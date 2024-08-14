@@ -15,7 +15,7 @@ out vec3 fragPos;
 void main()
 {
     v_textCoord = textCoord;
-    v_normal = normal;
+    v_normal = mat3(transpose(inverse(u_ModelMatrix))) * normal;
 
     fragPos = vec3(u_ModelMatrix * vec4(position, 1.0f));
     vec4 newPosition = u_Perspective * u_View * u_ModelMatrix * vec4(position, 1.0f);
