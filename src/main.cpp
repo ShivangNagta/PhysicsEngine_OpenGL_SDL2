@@ -26,10 +26,12 @@ const int gScreenHeight = 768;
 SDL_Window* gGraphicsApplicationWindow = nullptr;
 SDL_GLContext gOpenGLContext = nullptr; 
 bool gQuit = false;
+// Global variable to store seed
+float seedValue = 0.0f;
 
 const int numOfModels = 6;
 Mesh mesh[numOfModels];
-Mesh lightMesh[2];
+Mesh lightMesh[1];
 Texture2D texture[numOfModels];
 
 float angle = 0.0f;
@@ -111,8 +113,8 @@ void Init(){
 
 
 
-	mesh[0].loadOBJ("./assets/models/bunny.obj");
-	mesh[1].loadOBJ("./assets/models/floor.obj");
+	// mesh[0].loadOBJ("./assets/models/bunny.obj");
+	mesh[0].loadOBJ("./assets/models/terrain.obj");
 	// mesh[2].loadOBJ("./assets/models/barrel.obj");
 	// mesh[3].loadOBJ("./assets/models/woodcrate.obj");
 	// mesh[0].loadOBJ("./assets/models/robot.obj");
@@ -123,13 +125,18 @@ void Init(){
     
 
 
-    texture[0].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
+    // texture[0].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
     // texture[1].loadTexture("./assets/textures/bunny_diffuse.jpg", true);
-    texture[1].loadTexture("./assets/textures/tile_floor.jpg", true);
+    texture[0].loadTexture("./assets/textures/tile_floor.jpg", true);
     // texture[2].loadTexture("./assets/textures/crate.jpg", true);
     // texture[3].loadTexture("./assets/textures/woodcrate_diffuse.jpg", true);
     // texture[0].loadTexture("./assets/textures/robot_diffuse.jpg", true);
     // texture[5].loadTexture("./assets/textures/AMF.tga", true);
+
+        // Generate a random seed value once
+    seedValue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+
 }
 
 
@@ -167,7 +174,7 @@ void Input(){
     }
     
     const Uint8 *state = SDL_GetKeyboardState(NULL);
-    float speed = 0.01f;
+    float speed = 0.1f;
     if(state[SDL_SCANCODE_W]){
         g_camera.MoveForward(speed);
     }
@@ -194,30 +201,36 @@ void PreDraw(){
     glDisable(GL_CULL_FACE);
 
     ShaderProgram shaderProgram;
-    shaderProgram.LoadShader("./shaders/lighting_dir.vert", "./shaders/lighting_dir.frag");
+    shaderProgram.LoadShader("./shaders/test.vert", "./shaders/test.frag");
     GLuint gGraphicsPipelineShaderProgram = shaderProgram.GetProgramID();
 
     shaderProgram.Use();
 
+    GLint seedLocation = glGetUniformLocation(gGraphicsPipelineShaderProgram, "u_Seed");
+    if (seedLocation != -1) {
+        glUniform1f(seedLocation, seedValue);
+    }
+
+
     // Model positions
     glm::vec3 modelPos[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),    // bunny
-        glm::vec3(0.0f, 0.0f, 0.0f),    // floor
-        glm::vec3(-3.5f, 0.0f, 0.0f),   // barrel
-        glm::vec3(3.5f, 0.0f, 0.0f),    // crate
-        glm::vec3(0.0f, 0.0f, -2.0f),   // robot
-        glm::vec3(0.0f, 0.0f, 2.0f),    // pin
+        // glm::vec3(0.0f, 0.0f, 0.0f),    // bunny
+        glm::vec3(0.0f, -10.0f, 0.0f),    // floor
+        // glm::vec3(-3.5f, 0.0f, 0.0f),   // barrel
+        // glm::vec3(3.5f, 0.0f, 0.0f),    // crate
+        // glm::vec3(0.0f, 0.0f, -2.0f),   // robot
+        // glm::vec3(0.0f, 0.0f, 2.0f),    // pin
     };
 
     // Model scale
     glm::vec3 modelScale[] = {
-        glm::vec3(1.5f, 1.5f, 1.5f),    // bunny
+        // glm::vec3(1.5f, 1.5f, 1.5f),    // bunny
         // glm::vec3(20.0f, 1.0f, 20.0f),
-        glm::vec3(4.0f, 4.0f, 4.0f),    // floor
-        glm::vec3(1.0f, 1.0f, 1.0f),    // barrel
-        glm::vec3(1.0f, 1.0f, 1.0f),    // crate
-        glm::vec3(1.0f, 1.0f, 1.0f),    // robot
-        glm::vec3(0.1f, 0.1f, 0.1f),    // pin
+        glm::vec3(1000.0f, 10.0f, 1000.0f),    // floor
+        // glm::vec3(1.0f, 1.0f, 1.0f),    // barrel
+        // glm::vec3(1.0f, 1.0f, 1.0f),    // crate
+        // glm::vec3(1.0f, 1.0f, 1.0f),    // robot
+        // glm::vec3(0.1f, 0.1f, 0.1f),    // pin
     };
 
     glm::vec3 lightPos = {0.0f, 3.0f, 5.0f};
@@ -232,7 +245,7 @@ void PreDraw(){
     glm::vec3 cameraPos = g_camera.GetEyePos();
 
     glViewport(0, 0, gScreenWidth, gScreenHeight);
-    glClearColor(0.8f, 0.8f, 0.5f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Set light properties for the shader
@@ -245,9 +258,10 @@ void PreDraw(){
     glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "dirLight.specular"), 1.0f, 1.0f, 1.0f);
     glUniform3f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "dirLight.direction"), lightDirection.x, lightDirection.y, lightDirection.z);
 
-        // Assuming you're using OpenGL and have a float value representing time
+
     float timeValue = SDL_GetTicks() / 1000.0;  // Implement this to get time in seconds
-    glUniform1f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "time"), timeValue);
+    glUniform1f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "u_Time"), timeValue);
+
 
 
     // View Matrix
@@ -262,7 +276,7 @@ void PreDraw(){
     }
 
     // Perspective Projection
-    glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)gScreenWidth / (float)gScreenHeight, 0.1f, 100.0f);
+    glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)gScreenWidth / (float)gScreenHeight, 0.1f, 1000.0f);
     GLint u_PerspectiveLocation = glGetUniformLocation(gGraphicsPipelineShaderProgram, "u_Perspective");
     glUniformMatrix4fv(u_PerspectiveLocation, 1, GL_FALSE, &perspective[0][0]);
 
@@ -296,12 +310,12 @@ void PreDraw(){
 
     shaderProgram.Unuse();
 
-    // ShaderProgram lightShader;
-    // lightShader.LoadShader("./shaders/light.vert", "./shaders/light.frag");
-    // GLuint gGraphicsPipelineLightShader = lightShader.GetProgramID();
+    ShaderProgram lightShader;
+    lightShader.LoadShader("./shaders/terrain.vert", "./shaders/terrain.frag");
+    GLuint gGraphicsPipelineLightShader = lightShader.GetProgramID();
 
 
-    // // Shader for drawing the actual light source sphere
+    // // Shader for drawing the terrain
     // lightShader.Use();
 
     // // View Matrix
@@ -309,15 +323,18 @@ void PreDraw(){
     // glUniformMatrix4fv(glGetUniformLocation(gGraphicsPipelineLightShader, "u_ViewLight"), 1, GL_FALSE, &view[0][0]);
 
     // // Perspective Projection
-    // perspective = glm::perspective(glm::radians(45.0f), (float)gScreenWidth / (float)gScreenHeight, 0.1f, 100.0f);
+    // perspective = glm::perspective(glm::radians(45.0f), (float)gScreenWidth / (float)gScreenHeight, 0.1f, 1000.0f);
     // glUniformMatrix4fv(glGetUniformLocation(gGraphicsPipelineLightShader, "u_PerspectiveLight"), 1, GL_FALSE, &perspective[0][0]);
 
+    // GLint seedLocation = glGetUniformLocation(gGraphicsPipelineLightShader, "u_Seed");
+    // if (seedLocation != -1) {
+    //     glUniform1f(seedLocation, seedValue);
+    // }
+
     // // Draw first light
-    // glm::mat4 model = glm::translate(glm::mat4(1.0f), lightPos);
+    // glm::mat4 model = glm::mat4(1.0f);
     // glUniformMatrix4fv(glGetUniformLocation(gGraphicsPipelineLightShader, "u_ModelMatrixLight"), 1, GL_FALSE, &model[0][0]);
-    // GLint u_lightCol = glGetUniformLocation(gGraphicsPipelineLightShader, "lightColor");
-    // glUniform3f(u_lightCol, lightColor.x, lightColor.y, lightColor.z);
-    // lightMesh[0].draw();
+    // mesh[0].draw();
 
 
     SDL_GL_SwapWindow(gGraphicsApplicationWindow);
