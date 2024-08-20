@@ -114,7 +114,7 @@ void Init(){
 
 
 	// mesh[0].loadOBJ("./assets/models/bunny.obj");
-	mesh[0].loadOBJ("./assets/models/terrain2.obj");
+	mesh[0].loadOBJ("./assets/models/terrain.obj");
 	// mesh[2].loadOBJ("./assets/models/barrel.obj");
 	// mesh[3].loadOBJ("./assets/models/woodcrate.obj");
 	// mesh[0].loadOBJ("./assets/models/robot.obj");
