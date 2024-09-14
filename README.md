@@ -9,7 +9,7 @@ Showcase of some of those examples I have worked upon : </br>
 
 https://github.com/user-attachments/assets/7b8e90a7-118b-48fc-bcb0-8f3728b170ed
 
-
+Implementation of the Blinn Phong Reflection Model (OpenGL) : </br>
 
 https://github.com/user-attachments/assets/058fac9f-ee6d-44cc-a064-446113f2def6
 
