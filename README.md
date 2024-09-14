@@ -4,7 +4,7 @@ Directly run the executable - bin\main  <br/>
 There are multiple example codes in assets\codeSample. </br> </br>
 
 
-Showcase of some of those examples I have worked upon : </br>
+Showcase of some of those examples I have worked upon : </br> </br>
 
 Implementation of the Blinn Phong Reflection Model (OpenGL) : </br>
 
