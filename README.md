@@ -6,7 +6,7 @@ There are multiple example codes in assets\codeSample. </br>
 
 Showcase of some of those examples I have worked upon : </br>
 
-Implementation of the Blinn Phong Reflection Model : </br>
+Implementation of the Blinn Phong Reflection Model (OpenGL) :
 https://github.com/user-attachments/assets/7b8e90a7-118b-48fc-bcb0-8f3728b170ed
 
 
