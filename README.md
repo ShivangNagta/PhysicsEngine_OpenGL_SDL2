@@ -1,10 +1,14 @@
-# SDLPhysicsEngine
+# Simulation_Engine
 Currently not for deployment, but you can use it in windows (have the Mingw setup). <br/>
 Directly run the executable - bin\main  <br/>
 There are multiple example codes in assets\codeSample. </br> </br>
 
 
 Showcase of some of those examples I have worked upon : </br> </br>
+
+Procedural Terrain generation with Perlin Noise and Fractal Brownian Motion (OpenGL) : </br>
+
+https://github.com/user-attachments/assets/75cda9f3-77a6-4b57-aa40-26116edf93df
 
 Implementation of the Blinn Phong Reflection Model (OpenGL) : </br>
 
