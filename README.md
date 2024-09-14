@@ -4,10 +4,10 @@ Currently no proper cross platform support, but you can use it in windows (have 
 
 I mostly use it as a template for my projects. I have included the GUI library(ImGUI), which I use if needed. </br>
 
-There are a lot of sample project codes, I have worked upon in assets\codeSample. But you will have to </br> 
+There are a lot of sample project codes, I have worked upon in assets\codeSample.</br> 
 
 Directly run the executable - bin\main  <br/>
-or if you want to compile yourself then I have added the makefile, so you can run the "make" command.(Properly setup the makefile to compile the correct files)</br></br>
+or if you want to compile yourself then I have added the makefile, so you can run the "make" command with proper header files included. (There can be issues during compiling older projects as I have changed the project structure a few times)</br></br>
 
 
 Showcase of some of those examples I have worked upon : </br> </br>
